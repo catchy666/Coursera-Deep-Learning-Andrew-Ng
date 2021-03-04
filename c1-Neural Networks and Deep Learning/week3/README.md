@@ -21,7 +21,7 @@
 
 **输出层（the output layer）** 负责输出预测值。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/01.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/01.png)
 
 神经网络基本的结构和符号可以从上面的图中看出，这里不再复述。
 
@@ -46,12 +46,12 @@
 
 除输入层之外每层的计算输出可由下图总结出：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/02.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/02.jpg)
 
 
 如下图所示，逻辑回归的正向计算可以分解成计算z和a的两部分：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/03.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/03.jpg)
 
 
 对于两层神经网络，从输入层到隐藏层对应一次逻辑回归运算；从隐藏层到输出层对应一次逻辑回归运算。每层计算时，要注意对应的上标和下标，一般我们记上标方括号表示layer，下标表示第几个神经元。例如 $a_i^{[l]}$表示第$l$层的第$i$个神经元。注意，$i$从1开始，$l$从0开始。
@@ -79,7 +79,7 @@ $$
 
 其中 $a^{[1]}$为列向量：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/08.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/08.png)
 
 上述每个节点的计算都对应着一次逻辑运算的过程，分别由计算$z$和$a$两部分组成。
 
@@ -98,7 +98,7 @@ $$
 a^{[2]}=\sigma(z^{[2]})
 $$
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/04.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/04.jpg)
 
 
 之前也介绍过，这里顺便提一下， $W^{[1]}$的维度是$(4,3)$， $b^{[1]}$的维度是$(4,1)$，$ W^{[2]}$的维度是$(1,4)$， $b^{[2]}$的维度是$(1,1)$。这点需要特别注意。
@@ -109,17 +109,25 @@ $$
 
 之前我们也介绍过，在书写标记上用上标$(i)$表示第$i$个样本，例如 $x^{(i)}$， $z^{(i)}$， $a^{[2](i)}$。对于每个样本$i$，可以使用for循环来求解其正向输出：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/07.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/07.png)
 
 不使用for循环，利用矩阵运算的思想，输入矩阵X的维度为$(n_x,m)$。这样，我们可以把上面的for循环写成矩阵运算的形式：
 
-$Z^{[1]}=W^{[1]}X+b^{[1]} $
+$$
+Z^{[1]}=W^{[1]}X+b^{[1]}
+$$
 
-$A^{[1]}=\sigma(Z^{[1]}) $
+$$
+A^{[1]}=\sigma(Z^{[1]})
+$$
 
-$Z^{[2]}=W^{[2]}A^{[1]}+b^{[2]} $
+$$
+Z^{[2]}=W^{[2]}A^{[1]}+b^{[2]}
+$$
 
-$A^{[2]}=\sigma(Z^{[2]})$
+$$
+A^{[2]}=\sigma(Z^{[2]})
+$$
 
 其中， $Z^{[1]}$ 的维度是$(4,m)$，4是隐藏层神经元的个数； $A^{[1]}$的维度与 $Z^{[1]}$相同；$ Z^{[2]}$和 $A^{[2]}$的维度均为$(1,m)$。对上面这四个矩阵来说，均可以这样来理解：行表示神经元个数，列表示样本数目$m$。
 
@@ -130,21 +138,30 @@ $A^{[2]}=\sigma(Z^{[2]})$
 
 可供选用的激活函数有：
 
-* tanh 函数（the hyperbolic tangent function，双曲正切函数）：$$a = \frac{e^z - e^{-z}}{e^z + e^{-z}}$$
+* tanh 函数（the hyperbolic tangent function，双曲正切函数）：
+$$
+a = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+$$
 
 效果几乎总比 sigmoid 函数好（除开 **二元分类的输出层** ，因为我们希望输出的结果介于 0 到 1 之间），因为函数输出介于 -1 和 1 之间，激活函数的平均值就更接近 0，有类似数据中心化的效果。
 
-然而，tanh 函数存在和 sigmoid 函数一样的缺点：当 $z$ 趋紧无穷大（或无穷小），导数的梯度（即函数的斜率）就趋紧于 0，这使得梯度算法的速度大大减缓。
+然而，tanh 函数存在和 sigmoid 函数一样的缺点：当 $z$ 趋紧无穷大（或无穷小），导数的梯度（即函数的斜率）就趋紧于 0，这使得**梯度算法的速度大大减缓**。
 
-* **ReLU 函数（the rectified linear unit，修正线性单元）** ：$$a=max(0,z)$$
+* **ReLU 函数（the rectified linear unit，修正线性单元）** ：
+$$
+a=max(0,z)
+$$
 
 当 $z > 0$ 时，梯度始终为 1，从而提高神经网络基于梯度算法的运算速度，收敛速度远大于 sigmoid 和 tanh。然而当 $z < 0$ 时，梯度一直为 0，但是实际的运用中，该缺陷的影响不是很大。
 
-* Leaky ReLU（带泄漏的 ReLU）：$$a=max(0.01z,z)$$
+* Leaky ReLU（带泄漏的 ReLU）：
+$$
+a=max(0.01z,z)
+$$
 
 Leaky ReLU 保证在 $z < 0$ 的时候，梯度仍然不为 0。理论上来说，Leaky ReLU 有 ReLU 的所有优点，但在实际操作中没有证明总是好于 ReLU，因此不常用。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/05.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/05.png)
 
 
 在选择激活函数的时候，如果在不知道该选什么的时候就选择 ReLU，当然也没有固定答案，要依据实际问题在交叉验证集合中进行验证分析。当然，我们可以在不同层选用不同的激活函数。
@@ -157,15 +174,23 @@ Leaky ReLU 保证在 $z < 0$ 的时候，梯度仍然不为 0。理论上来说�
 
 * sigmoid 函数：
 
-$$g(z) = \frac{1}{1+e^{-z}}$$
+$$
+g(z) = \frac{1}{1+e^{-z}}
+$$
 
-$$g\prime(z)=\frac{dg(z)}{dz} = \frac{1}{1+e^{-z}}(1-\frac{1}{1+e^{-z}})=g(z)(1-g(z))$$
+$$
+g\prime(z)=\frac{dg(z)}{dz} = \frac{1}{1+e^{-z}}(1-\frac{1}{1+e^{-z}})=g(z)(1-g(z))
+$$
 
 * tanh 函数：
 
-$$g(z) = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}$$
+$$
+g(z) = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+$$
 
-$$g\prime(z)=\frac{dg(z)}{dz} = 1-(tanh(z))^2=1-(g(z))^2$$
+$$
+g\prime(z)=\frac{dg(z)}{dz} = 1-(tanh(z))^2=1-(g(z))^2
+$$
 
 ## 神经网络的梯度下降法
 
@@ -175,19 +200,27 @@ $$g\prime(z)=\frac{dg(z)}{dz} = 1-(tanh(z))^2=1-(g(z))^2$$
 
 该神经网络正向传播过程为 ：
 
-$$Z^{[1]}=W^{[1]}X+b^{[1]}$$
+$$
+Z^{[1]}=W^{[1]}X+b^{[1]}
+$$
 
-$$A^{[1]}=g^{[1]}(Z^{[1]})$$
+$$
+A^{[1]}=g^{[1]}(Z^{[1]})
+$$
 
-$$Z^{[2]}=W^{[2]}A^{[1]}+b^{[2]}$$
+$$
+Z^{[2]}=W^{[2]}A^{[1]}+b^{[2]}
+$$
 
-$$A^{[2]}=g^{[2]}(Z^{[2]})=\sigma(Z^{[2]})$$
+$$
+A^{[2]}=g^{[2]}(Z^{[2]})=\sigma(Z^{[2]})
+$$
 
 ### 反向梯度下降
 
 神经网络反向梯度下降公式（左）和其代码向量化（右）：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/01-Neural%20Networks%20and%20Deep%20Learning/week3/md_images/06.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3/tmp_imgs/06.png)
 
 
 ## 随机初始化
@@ -198,8 +231,8 @@ $$A^{[2]}=g^{[2]}(Z^{[2]})=\sigma(Z^{[2]})$$
 
 以 2 个输入，2 个隐藏神经元为例：
 
-```py
-W = np.random.rand(2,2)* 0.01
+```python
+W = np.random.rand(2,2) * 0.01
 b = np.zero((2,1))
 ```
 
