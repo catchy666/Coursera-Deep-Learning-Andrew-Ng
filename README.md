@@ -13,6 +13,7 @@
 * [红色石头的机器学习之路](https://zhuanlan.zhihu.com/Redstone)
 * [机器学习之路](https://zhuanlan.zhihu.com/koalatree)
 * [机器学习爱好者](http://www.ai-start.com)
+* [AlbertHG - GitHub](https://github.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai)
 
 ## License
 遵循 MIT 许可证。有关详细，请参阅[LICENSE](https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/blob/main/LICENSE)。

@@ -28,7 +28,7 @@
 
 根据验证结果，我们对参数进行适当的调整优化，再进行下一次的Idea->Code->Experiment循环。通过很多次的循环，不断调整参数，选定最佳的参数值，从而让神经网络性能最优化。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/01.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/01.jpg)
 
 对于一个需要解决的问题的样本数据，在建立模型的过程中，数据会被划分为以下几个部分：
 
@@ -63,7 +63,7 @@
 
 偏差（Bias）和方差（Variance）:在传统的机器学习算法中，Bias和Variance是对立的，分别对应着欠拟合和过拟合，常常需要在Bias和Variance之间进行权衡。而在深度学习中，我们可以同时减小Bias和Variance，构建最佳神经网络模型。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/02.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/02.jpg)
 
 从图中我们可以看出，在欠拟合（underfitting）的情况下，出现高偏差（high bias）的情况；在过拟合（overfitting）的情况下，出现高方差（high variance）的情况。
 
@@ -83,7 +83,7 @@
 
 看下面这个例子：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/03.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/03.jpg)
 
 当训练出一个模型以后，如果：
 
@@ -112,10 +112,19 @@
 
 ### Logistic回归中的正则化
 
-$$J(w,b) = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}{||w||}^2\_2$$
+对于 Logistic 回归，加入 L2 正则化（也称“L2 范数”）的成本函数：
+$$
+J(w,b) = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}{||w||}^2_2
+$$
 
-* L2 正则化：$$\frac{\lambda}{2m}{||w||}^2\_2 = \frac{\lambda}{2m}\sum_{j=1}^{n\_x}w^2\_j = \frac{\lambda}{2m}w^Tw$$
-* L1 正则化：$$\frac{\lambda}{2m}{||w||}\_1 = \frac{\lambda}{2m}\sum_{j=1}^{n\_x}{|w\_j|}$$
+* L2 正则化：
+$$
+\frac{\lambda}{2m}{||w||}^2_2 = \frac{\lambda}{2m}\sum_{j=1}^{n_x}w^2_j = \frac{\lambda}{2m}w^Tw
+$$
+* L1 正则化：
+$$
+\frac{\lambda}{2m}{||w||}_1 = \frac{\lambda}{2m}\sum_{j=1}^{n_x}{|w_j|}
+$$
 
 其中，λ 为 **正则化因子** ，是需要调整的 **超参数** 。
 
@@ -127,11 +136,15 @@ $$J(w,b) = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}{||
 
 对于神经网络，加入正则化的成本函数：
 
-$$J(w^{[1]}, b^{[1]}, ..., w^{[L]}, b^{[L]}) = \frac{1}{m}\sum\_{i=1}^mL(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}\sum\_{l=1}^L{{||w^{[l]}||}}^2\_F$$
+$$
+J(w^{[1]}, b^{[1]}, ..., w^{[L]}, b^{[L]}) = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}\sum_{l=1}^L{{||w^{[l]}||}}^2_F
+$$
 
 因为 w 的大小为 ($n^{[l−1]}$, $n^{[l]}$)，因此
 
-$${{||w^{[l]}||}}^2\_F = \sum^{n^{[l-1]}}\_{i=1}\sum^{n^{[l]}}\_{j=1}(w^{[l]}\_{ij})^2$$
+$$
+{{||w^{[l]}||}}^2_F = \sum^{n^{[l-1]}}_{i=1}\sum^{n^{[l]}}_{j=1}(w^{[l]}_{ij})^2
+$$
 
 该矩阵范数被称为 **弗罗贝尼乌斯范数（Frobenius Norm）** ，所以神经网络中的正则化项被称为弗罗贝尼乌斯范数矩阵。
 
@@ -139,37 +152,45 @@ $${{||w^{[l]}||}}^2\_F = \sum^{n^{[l-1]}}\_{i=1}\sum^{n^{[l]}}\_{j=1}(w^{[l]}\_{
 
 **在加入正则化项后，梯度变为**（反向传播要按这个计算），它定义含有代价函数的导数和以及添加的正则项：
 
-$$dW^{[l]}= \frac{\partial L}{\partial w^{[l]}} +\frac{\lambda}{m}W^{[l]}$$
+$$
+dW^{[l]}= \frac{\partial L}{\partial w^{[l]}} +\frac{\lambda}{m}W^{[l]
+}
+$$
 
 代入梯度更新公式：
-
-$$W^{[l]} := W^{[l]}-\alpha dW^{[l]}$$
-
+$$
+W^{[l]} := W^{[l]}-\alpha dW^{[l]}
+$$
 可得：
+$$
+W^{[l]} := W^{[l]} - \alpha [\frac{\partial L}{\partial w^{[l]}} + \frac{\lambda}{m}W^{[l]}]
+$$
 
-$$W^{[l]} := W^{[l]} - \alpha [\frac{\partial L}{\partial w^{[l]}} + \frac{\lambda}{m}W^{[l]}]$$
+$$
+= W^{[l]} - \alpha \frac{\lambda}{m}W^{[l]} - \alpha \frac{\partial L}{\partial w^{[l]}}
+$$
 
-$$= W^{[l]} - \alpha \frac{\lambda}{m}W^{[l]} - \alpha \frac{\partial L}{\partial w^{[l]}}$$
-
-$$= (1 - \frac{\alpha\lambda}{m})W^{[l]} - \alpha \frac{\partial L}{\partial w^{[l]}}$$
-
+$$
+= (1 - \frac{\alpha\lambda}{m})W^{[l]} - \alpha \frac{\partial L}{\partial w^{[l]}}
+$$
 其中，
-
-$$(1 - \frac{\alpha\lambda}{m})W^{[l]}<1$$
+$$
+(1 - \frac{\alpha\lambda}{m})W^{[l]}<1
+$$
 
 会给原来的 $W^{[l]}$一个衰减的参数。所以 L2 正则化项也被称为 **权重衰减（Weight Decay）**。
 
 ## 为什么正则化有利于防止过拟合
-
+### 直观解释
 为什么正则化能够有效避免high variance，防止过拟合呢？下面我们通过几个例子说明。
 
 还是之前那张图，从左到右，分别表示了欠拟合，刚好拟合，过拟合三种情况。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/04.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/04.jpg)
 
-假如我们选择了非常复杂的神经网络模型，如上图左上角所示。在未使用正则化的情况下，我们得到的分类超平面可能是类似上图右侧的过拟合。但是，如果使用正则化因子，直观上理解，正则化因子 \lambda 设置的足够大的情况下，为了使代价函数最小化，权重矩阵 W 就会被设置为接近于0的值。则相当于消除了很多神经元的影响，那么图中的大的神经网络就会变成一个较小的网络。
+假如我们选择了非常复杂的神经网络模型，如上图左上角所示。在未使用正则化的情况下，我们得到的分类超平面可能是类似上图右侧的过拟合。但是，如果使用正则化因子，直观上理解，正则化因子 $\lambda$ 设置的足够大的情况下，为了使代价函数最小化，权重矩阵 W 就会被设置为接近于0的值。则相当于消除了很多神经元的影响，那么图中的大的神经网络就会变成一个较小的网络。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/05.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/05.png)
 
 当然上面这种解释是一种直观上的理解，但是实际上隐藏层的神经元依然存在，但是他们的影响变小了，便不会导致过拟合。
 
@@ -177,7 +198,7 @@ $$(1 - \frac{\alpha\lambda}{m})W^{[l]}<1$$
 
 假设神经元中使用的激活函数为`g(z) = tanh(z)`（sigmoid 同理）。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/06.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/06.png)
 
 在加入正则化项后，当 $λ$ 增大，导致 $W^{[l]}$减小，$Z^{[l]} = W^{[l]}a^{[l-1]} + b^{[l]}$便会减小。由上图可知，在 $z$ 较小（接近于 0）的区域里，`tanh(z)`函数近似线性，所以每层的函数就近似线性函数，整个网络就成为一个简单的近似线性的网络，因此不会发生过拟合。
 
@@ -189,13 +210,13 @@ $$(1 - \frac{\alpha\lambda}{m})W^{[l]}<1$$
 
 **dropout（随机失活）** ：是在神经网络的隐藏层为每个神经元结点设置一个随机消除的概率，保留下来的神经元形成一个结点较少、规模较小的网络用于训练。dropout 正则化较多地被使用在 **计算机视觉（Computer Vision）** 领域。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/07.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/07.jpg)
 
 实现Dropout的方法：反向随机失活（Inverted dropout）:
 
 反向随机失活是实现 dropout 的方法。对第`l`层进行 dropout：
 
-```py
+```python
 keep_prob = 0.8    # 设置神经元保留概率
 dl = np.random.rand(al.shape[0], al.shape[1]) < keep_prob
 al = np.multiply(al, dl)
@@ -226,73 +247,83 @@ dropout 的一大 **缺点** 是成本函数无法被明确定义。因为每次
 
 * 数据扩增（Data Augmentation）：通过图片的一些变换（翻转，局部放大后切割等），得到更多的训练集和验证集。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/08.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/08.jpg)
 
 * 早停止法（Early Stopping）：*一个神经网络模型随着迭代训练次数增加，train set error一般是单调减小的，而dev set error 先减小，之后又增大。也就是说训练次数过多时，模型会对训练样本拟合的越来越好，但是对验证集拟合效果逐渐变差，即发生了过拟合。* 因此将训练集和验证集进行梯度下降时的成本变化曲线画在同一个坐标轴内，在两者开始发生较大偏差时及时停止迭代，避免过拟合。这种方法的缺点是无法同时达成偏差和方差的最优。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/09.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/09.jpg)
 
 然而，Early Stopping有其自身的缺点，通常来说，机器学习训练模型有两个目标：一是优化cost function，尽量减小 $J$ ；二是防止过拟合。这两个目标彼此对立的，即减小 $J$ 的同时可能会造成过拟合，反之亦然。
 
-但是，Early Stopping的做法通过减少得带训练次数来防止过拟合，这样J就不会足够小。也就是说，early Stopping将上述两个目标融合在一起，同时优化，但可能没有“分而治之”的效果好。
+但是，Early Stopping的做法通过减少迭代训练次数来防止过拟合，这样$J$就不会足够小。也就是说，early Stopping将上述两个目标融合在一起，同时优化，但可能没有“分而治之”的效果好。
 
 ## 标准化(归一化)输入
 
 使用标准化处理输入 $X$ 能够有效加速收敛。标准化输入就是对训练数据集进行归一化的操作，即将原始数据减去其均值 $\mu$ 后，再除以其方差 $\sigma^2$ ：
 
-$$x = \frac{x - \mu}{\sigma^2}$$
+$$
+x = \frac{x - \mu}{\sigma^2}
+$$
 
 其中：
 
-$$\mu = \frac{1}{m}\sum_{i=1}^{m}x^{(i)}$$
-$$\sigma = \sqrt{\frac{1}{m}\sum_{i=1}^{m}x^{{(i)}^2}}$$
+$$
+\mu = \frac{1}{m}\sum_{i=1}^{m}x^{(i)}
+$$
+$$
+\sigma = \sqrt{\frac{1}{m}\sum_{i=1}^{m}x^{{(i)}^2}}
+$$
 
 以二维平面为例，下图展示了其归一化过程：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/10.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/10.jpg)
 
 值得注意的是，由于训练集进行了标准化处理，那么对于测试集或在实际应用时，应该使用同样的 $\mu$ 和 $\sigma^2$ 对其进行标准化处理。这样保证了训练集合测试集的标准化操作一致。
 
 
 在不使用归一化的代价函数中，如果我们设置一个较小的学习率，那么很可能我们需要很多次迭代才能到达代价函数全局最优解；如果使用了归一化，那么无论从哪个位置开始迭代，我们都能以相对很少的迭代次数找到全局最优解。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/11.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/11.jpg)
 
 ## 梯度消失和梯度爆炸
 
 梯度消失和梯度爆炸。意思是当训练一个层数非常多的神经网络时，计算得到的梯度可能非常小或非常大，甚至是指数级别的减小或增大。这样会让训练过程变得非常困难。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/12.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/12.jpg)
 
  $W^{[l]}=\left[ \begin{array}{l}1.5 & 0 \\\ 0 & 1.5\end{array} \right]$
 便于分析，我们令各层的激活函数为线性函数，忽略各层常数项b的影响，即假定 $g(Z) = Z, b^{[l]} = 0$，对于目标输出有：
 
-$$\hat{Y} = W^{[L]}W^{[L-1]}...W^{[2]}W^{[1]}X$$
+$$
+\hat{Y} = W^{[L]}W^{[L-1]}...W^{[2]}W^{[1]}X
+$$
 
 - 如果各层权重 $W^{[l]}$ 的元素都稍大于 1 ，例如 1.5, $W^{[l]}=\left[ \begin{array}{l}1.5 & 0 \\\ 0 & 1.5\end{array} \right]$，则预测输出 $\hat{Y}$ 将正比于 $1.5^{L}$ 。$L$ 越大， $\hat{Y}$ 越大，且呈指数型增长。我们称之为数值爆炸。
 - 相反，如果各层权重 $W^{[l]}$ 的元素都稍小于 1，例如 0.5，$W^{[l]}=\left[ \begin{array}{l}0.5 & 0 \\\ 0 & 0.5\end{array} \right]$ ，则预测输出 $\hat{Y}$ 将正比于 $0.5^{L}$ 。网络层数L越多， $\hat{Y}$ 呈指数型减小。我们称之为数值消失。
 
 ## 神经网络的权重初始化
 
-利用初始化缓解梯度消失和爆炸问题.
+利用初始化缓解梯度消失和爆炸问题。
 
 根据
 
-$$z={w}_1{x}\_1+{w}\_2{x}\_2 + ... + {w}\_n{x}\_n + b$$
+$$
+z={w}_1{x}_1+{w}_2{x}_2 + ... + {w}_n{x}_n + b
+$$
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/13.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/13.jpg)
 
 思路是让$w$与$n$有关，且$n$越大，$w$应该越小才好。这样能够保证$z$不会过大:
 
 不同激活函数的参数初始化：
 - 激活函数使用ReLu：令 $W$ 方差$Var(w_i) = \frac{2}{n}$，相应的`python`代码是：
 
-    ```py
+    ```python
     WL = np.random.randn(WL.shape[0], WL.shape[1]) * np.sqrt(1/n)
     ````
-- 激活函数使用tenh：令 $W$ 方差$Var(w_i) = \frac{1}{n}$，相应的`python`代码是：
-    ```py
-    w[l] = np.random.randn(n[l],n[l-1])*np.sqrt(2/n[l-1])  
+- 激活函数使用tanh：令 $W$ 方差$Var(w_i) = \frac{1}{n}$，相应的`python`代码是：
+    ```python
+    w[l] = np.random.randn(n[l],n[l-1]) * np.sqrt(2/n[l-1])  
     ```
 其中$n$是输入的神经元个数，也就是 $n^{[l-1]}$。
 
@@ -302,15 +333,16 @@ $$z={w}_1{x}\_1+{w}\_2{x}\_2 + ... + {w}\_n{x}\_n + b$$
 
 使用双边误差的方法去逼近导数，精度要高于单边误差。
 
-- 单边误差：$f'(\theta) = {\lim_{\varepsilon\to 0}} = \frac{f(\theta + \varepsilon) - (\theta)}{\varepsilon}$，误差：$O(\varepsilon)$
+- 单边误差：$f'(\theta) = {\lim_{\varepsilon\to 0}} = \frac{f(\theta + \varepsilon) - (\theta)}{\varepsilon}$
+- 误差：$O(\varepsilon)$
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/14.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/14.png)
 
 
-- 双边误差：
-$f'(\theta) = {\lim_{\varepsilon\to 0}} = \frac{f(\theta + \varepsilon) - (\theta - \varepsilon)}{2\varepsilon}$，误差：$O(\varepsilon^2)$
+- 双边误差：$f'(\theta) = {\lim_{\varepsilon\to 0}} = \frac{f(\theta + \varepsilon) - (\theta - \varepsilon)}{2\varepsilon}$
+- 误差：$O(\varepsilon^2)$
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/15.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/15.png)
 
 当 $ε$ 越小时，结果越接近真实的导数，也就是梯度值。可以使用这种方法来判断反向传播进行梯度下降时，是否出现了错误。
 
@@ -326,23 +358,31 @@ $$J(W^{[1]}, b^{[1]}, ..., W^{[L]}，b^{[L]})=J(\theta)$$
 
 同时，对 $dW^{[1]}$，$db^{[1]}$，...，$dW^{[L]}$，$db^{[L]}$ 执行同样的操作得到巨型向量 $dθ$，它和 $θ$ 有同样的维度。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/02-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/md_images/16.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1/tmp-imgs/16.jpg)
 
 接着利用 $J(\theta)$ 对每个 $\theta_i$ 计算近似梯度，其值与反向传播算法得到的 $d\theta_i$ 相比较，检查是否一致。例如，对于第i个元素，近似梯度为：
 
-$$d\theta_{approx}[i] ＝ \frac{J(\theta\_1, \theta\_2, ..., \theta\_i+\varepsilon, ...) - J(\theta\_1, \theta\_2, ..., \theta\_i-\varepsilon, ...)}{2\varepsilon}$$
+$$
+d\theta_{approx}[i] ＝ \frac{J(\theta_1, \theta_2, ..., \theta_i+\varepsilon, ...) - J(\theta_1, \theta_2, ..., \theta_i-\varepsilon, ...)}{2\varepsilon}
+$$
 
 应该
 
-$$\approx{d\theta[i]} = \frac{\partial J}{\partial \theta_i}$$
+$$
+\approx{d\theta[i]} = \frac{\partial J}{\partial \theta_i}
+$$
 
 因此，我们用梯度检验值
 
-$$\frac{{||d\theta\_{approx} - d\theta||}\_2}{{||d\theta\_{approx}||}\_2+{||d\theta||}\_2}$$
+$$
+\frac{{||d\theta_{approx} - d\theta||}_2}{{||d\theta\_{approx}||}_2+{||d\theta||}_2}
+$$
 
 检验反向传播的实施是否正确。其中，
 
-$${||x||}\_2 = \sum^N\_{i=1}{|x_i|}^2$$
+$$
+{||x||}_2 = \sum^N_{i=1}{|x_i|}^2
+$$
 
 表示向量 $x$ 的 L2-范数（也称“欧几里德范数”），它是误差平方之和，然后求平方根，得到的欧氏距离。
 
