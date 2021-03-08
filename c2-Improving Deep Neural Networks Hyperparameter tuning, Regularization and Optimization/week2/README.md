@@ -134,26 +134,34 @@ $$
 
 我们将指数加权平均公式的一般形式写下来：
 
-$$V_{t} = \beta V_{t-1} + (1-\beta) \theta_{t}=(1-\beta) \theta_{t}+(1-\beta)·\beta· \theta_{t}+(1-\beta)·\beta^2· \theta_{t}+...+(1-\beta)·\beta^{t-1}·\theta_{1}+\theta^tV^0$$
+$$
+V_{t} = \beta V_{t-1} + (1-\beta) \theta_{t}=(1-\beta) \theta_{t}+(1-\beta)·\beta· \theta_{t}+(1-\beta)·\beta^2· \theta_{t}+...+(1-\beta)·\beta^{t-1}·\theta_{1}+\theta^tV^0
+$$
 
 观察上面这个式子， $\theta_t,\theta_{t-1},\theta_{t-2},\cdots,\theta_1$ 原始数据值， $(1-\beta)$,$(1-\beta)\beta$,$(1-\beta)\beta^2$,$\cdots$,$(1-\beta)\beta^{t-1}$ 是类似指数曲线，从右向左，呈指数下降的。 $V_t$ 的值就是这两个子式的点乘，将原始数据值与衰减指数点乘，相当于做了指数衰减，离得越近，影响越大，离得越远，影响越小，衰减越厉害。
 
 根据函数极限的一条定理：
 
-$${\lim_{\epsilon\to 0}}(1 - \epsilon)^{\frac{1}{\epsilon}} = \frac{1}{e} \approx 0.368$$
+$$
+{\lim_{\epsilon\to 0}}(1 - \epsilon)^{\frac{1}{\epsilon}} = \frac{1}{e} \approx 0.368
+$$
 
 在我们的例子中，$1-\varepsilon=\beta=0.9$。
 
-- 当 $β$ 为 0.9 时，$\frac{1}{1-\beta}=10$，可以当作把过去 10 天的气温指数加权平均作为当日的气温，第10天的气温指数已经下降到了当天的 1/3 左右，再往前数（过去第11天，12天，13……）气温指数就可以忽略了。
+- 当 $β$ 为 0.9 时，$\frac{1}{1-\beta}=10$，可以当作把过去 10 天的气温指数加权平均作为当日的气温，第10 天的气温指数已经下降到了当天的 1/3 左右，再往前数（过去第11天，12天，13……）气温指数就可以忽略了。
 - 同理，当 $β$ 为 0.98 时，$\frac{1}{1-\beta}=50$，可以把过去 50 天的气温指数加权平均作为当日的气温。
 
 因此，在计算当前时刻的平均值时，只需要前一天的平均值和当前时刻的值。
 
-$$v_t = \beta v_{t-1} + (1 - \beta)\theta_t$$
+$$
+v_t = \beta v_{t-1} + (1 - \beta)\theta_t
+$$
 
 考虑到代码，只需要不断更新 $v$ 即可：
 
-$$v := \beta v + (1 - \beta)\theta_t$$
+$$
+v := \beta v + (1 - \beta)\theta_t
+$$
 
 指数平均加权并 **不是最精准** 的计算平均数的方法，你可以直接计算过去 10 天或 50 天的平均值来得到更好的估计，但缺点是保存数据需要占用更多内存，执行更加复杂，计算成本更加高昂。
 
@@ -161,20 +169,26 @@ $$v := \beta v + (1 - \beta)\theta_t$$
 
 ## 指数加权平均的偏差修正
 
-在我们执行指数加权平均的公式时，当 ￥\beta=0.98￥ 时，我们得到的并不是图中的绿色曲线，而是下图中的紫色曲线，其起点比较低。
+在我们执行指数加权平均的公式时，当 $\beta=0.98$ 时，我们得到的并不是图中的绿色曲线，而是下图中的紫色曲线，其起点比较低。
 
 ![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week2/tmp_imgs/05.jpg)
 
 原因是：
 
-$$v_0 = 0$$
-$$v_1 = 0.98v_0 + 0.02\theta_1$$
+$$
+v_0 = 0
+$$
+$$
+v_1 = 0.98v_0 + 0.02\theta_1
+$$
 
 如果第一天的值为如 40 ，则 $v_{1}=0.02\times40=8$ ，得到的值要远小于实际值,因此，$v_1$ 仅为第一个数据的 0.02（或者说 $1-β$），后面几天的情况也会由于初值引起的影响，均低于实际均值。
 
 因此，我们修改公式为
 
-$$\frac{v\_t}{1-\beta^t} = \beta v_{t-1} + (1 - \beta)\theta_t$$
+$$
+\frac{v_t}{1-\beta^t} = \beta v_{t-1} + (1 - \beta)\theta_t
+$$
 
 偏差修正得到了绿色的曲线，在开始的时候，能够得到比紫色曲线更好的计算平均的效果。随着 $t$ 逐渐增大， $\beta^{t}$ 接近于 0，所以后面绿色的曲线和紫色的曲线逐渐重合了。
 
@@ -194,30 +208,38 @@ $$\frac{v\_t}{1-\beta^t} = \beta v_{t-1} + (1 - \beta)\theta_t$$
 
 **具体算法如下**：
 
-for l = 1, .. , L：
-$$v\_{dW^{[l]}} = \beta v\_{dW^{[l]}} + (1 - \beta) dW^{[l]}$$
-$$v\_{db^{[l]}} = \beta v\_{db^{[l]}} + (1 - \beta) db^{[l]}$$
-$$W^{[l]} := W^{[l]} - \alpha v\_{dW^{[l]}}$$
-$$b^{[l]} := b^{[l]} - \alpha v\_{db^{[l]}}$$
+$for l = 1, .. , L：$
+$$\ \ \ \ v_{dW^{[l]}} = \beta v_{dW^{[l]}} + (1 - \beta) dW^{[l]}$$
+$$\ \ \ \ v_{db^{[l]}} = \beta v_{db^{[l]}} + (1 - \beta) db^{[l]}$$
+$$\ \ \ \ W^{[l]} := W^{[l]} - \alpha v_{dW^{[l]}}$$
+$$\ \ \ \ b^{[l]} := b^{[l]} - \alpha v_{db^{[l]}}$$
 
 其中，将动量衰减参数 $β$ 设置为 0.9 是超参数的一个常见且效果不错的选择。当 $β$ 被设置为 0 时，显然就成了 batch 梯度下降法。
 
-**算法本质解释**：
+**momentum梯度下降法的形象解释**：
 
 在对应上面的计算公式中，将Cost function想象为一个碗状，想象从顶部往下滚球，其中：
 
-$dw$，$db$ 想象成球的加速度；而 $v\_{dw}$、$v\_{db}$ 相当于速度。
+$dw$，$db$ 想象成球的加速度；而 $v_{dw}$、$v_{db}$ 相当于速度。
 
 小球在向下滚动的过程中，因为加速度的存在速度会变快，但是由于 β 的存在，其值小于 1，可以认为是摩擦力，所以球不会无限加速下去。
 
 ## RMSprop
 
-**RMSProp（Root Mean Square Prop，均方根支）** 算法是在对梯度进行指数加权平均的基础上，引入平方和平方根。每次迭代训练过程中，其权重W和常数项b的更新表达式为，具体过程为（省略了 $l$）：
+**RMSProp（Root Mean Square Prop，均方根传播）** 算法是在对梯度进行指数加权平均的基础上，引入平方和平方根。每次迭代训练过程中，其权重W和常数项b的更新表达式为，具体过程为（省略了 $l$）：
 
-$$s_{dw} = \beta s_{dw} + (1 - \beta)(dw)^2$$
-$$s_{db} = \beta s_{db} + (1 - \beta)(db)^2$$
-$$w := w - \alpha \frac{dw}{\sqrt{s_{dw} + \epsilon}}$$
-$$b := b - \alpha \frac{db}{\sqrt{s_{db} + \epsilon}}$$
+$$
+s_{dw} = \beta s_{dw} + (1 - \beta)(dw)^2
+$$
+$$
+s_{db} = \beta s_{db} + (1 - \beta)(db)^2
+$$
+$$
+w := w - \alpha \frac{dw}{\sqrt{s_{dw} + \epsilon}}
+$$
+$$
+b := b - \alpha \frac{db}{\sqrt{s_{db} + \epsilon}}
+$$
 
 ![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week2/tmp_imgs/07.jpg)
 
@@ -225,12 +247,18 @@ $$b := b - \alpha \frac{db}{\sqrt{s_{db} + \epsilon}}$$
 
 还有一点需要注意的是为了避免RMSprop算法中分母为零，通常可以在分母增加一个极小的常数 $\varepsilon$ ：
 
-$$\frac{dw}{\sqrt{s_{dw} + \epsilon}}$$
-$$\frac{db}{\sqrt{s_{db} + \epsilon}}$$
+$$
+\frac{dw}{\sqrt{s_{dw} + \epsilon}}
+$$
+$$
+\frac{db}{\sqrt{s_{db} + \epsilon}}
+$$
 
 其中， $\varepsilon=10^{-8}$ ，或者其它较小值。
 
+RMSProp 有助于减少抵达最小值路径上的摆动，并允许使用一个更大的学习率 α，从而加快算法学习速度。并且，它和 Adam 优化算法已被证明适用于不同的深度学习网络结构。
 
+注意：$\beta$ 也是一个超参数。
 
 ## Adam优化算法
 
@@ -238,31 +266,53 @@ $$\frac{db}{\sqrt{s_{db} + \epsilon}}$$
 
 首先进行初始化：
 
-$$V_{dW} = 0, V_{dW} = 0, S_{db} = 0, S_{db} = 0$$
+$$
+V_{dW} = 0, V_{dW} = 0, S_{db} = 0, S_{db} = 0
+$$
 
 - 用每一个 mini-batch 计算 $dW$、$db$，第 $t$ 次迭代时：
 
-$$V_{dW} = \beta_1 V_{dW} + (1 - \beta_1) dW$$
-$$V_{db} = \beta_1 V_{db} + (1 - \beta_1) db$$
-$$S_{dW} = \beta_2 S_{dW} + (1 - \beta_2) {(dW)}^2$$
-$$S_{db} = \beta_2 S_{db} + (1 - \beta_2) {(db)}^2$$
+$$
+V_{dW} = \beta_1 V_{dW} + (1 - \beta_1) dW
+$$
+$$
+V_{db} = \beta_1 V_{db} + (1 - \beta_1) db
+$$
+$$
+S_{dW} = \beta_2 S_{dW} + (1 - \beta_2) {(dW)}^2
+$$
+$$
+S_{db} = \beta_2 S_{db} + (1 - \beta_2) {(db)}^2
+$$
 
 - 一般使用 Adam 算法时需要计算偏差修正：
 
-$$V^{corrected}_{dW} = \frac{V_{dW}}{1-{\beta_1}^t}$$
-$$V^{corrected}_{db} = \frac{V_{db}}{1-{\beta_1}^t}$$
-$$S^{corrected}_{dW} = \frac{S_{dW}}{1-{\beta_2}^t}$$
-$$S^{corrected}_{db} = \frac{S_{db}}{1-{\beta_2}^t}$$
+$$
+V^{corrected}_{dW} = \frac{V_{dW}}{1-{\beta_1}^t}
+$$
+$$
+V^{corrected}_{db} = \frac{V_{db}}{1-{\beta_1}^t}
+$$
+$$
+S^{corrected}_{dW} = \frac{S_{dW}}{1-{\beta_2}^t}
+$$
+$$
+S^{corrected}_{db} = \frac{S_{db}}{1-{\beta_2}^t}
+$$
 
 - 所以，更新 $W$、$b$ 时有：
 
-$$W := W - \alpha \frac{V^{corrected}_{dW}}{{\sqrt{S^{corrected}_{dW}} + \epsilon}}$$
+$$
+W := W - \alpha \frac{V^{corrected}_{dW}}{{\sqrt{S^{corrected}_{dW}} + \epsilon}}
+$$
 
-$$b := b - \alpha \frac{V^{corrected}_{db}}{{\sqrt{S^{corrected}_{db}} + \epsilon}}$$
+$$
+b := b - \alpha \frac{V^{corrected}_{db}}{{\sqrt{S^{corrected}_{db}} + \epsilon}}
+$$
 
 （可以看到 Andrew 在这里 $ϵ$ 没有写到平方根里去，和他在 RMSProp 中写的不太一样。考虑到 $ϵ$ 所起的作用，我感觉影响不大）
 
-超参数的选择
+### 超参数的选择
 
 Adam 优化算法有很多的超参数，其中
 
@@ -286,17 +336,23 @@ $β_1$、$β_2$、$ϵ$ 通常不需要调试。
 
 最常用的学习率衰减方法：
 
-$$\alpha = \frac{1}{1 + decay\\\_rate * epoch\\\_num} * \alpha\_0$$
+$$
+\alpha = \frac{1}{1 + decay\_rate * epoch\_num} * \alpha_0
+$$
 
 其中，`decay_rate`为衰减率（超参数），`epoch_num`为将所有的训练样本完整过一遍的次数。
 
 * 指数衰减：
 
-$$\alpha = 0.95^{epoch\\\_num} * \alpha\_0$$
+$$
+\alpha = 0.95^{epoch\_num} * \alpha_0
+$$
 
 * 其他：
 
-$$\alpha = \frac{k}{\sqrt{epoch\\\_num}} * \alpha\_0$$
+$$
+\alpha = \frac{k}{\sqrt{epoch\_num}} * \alpha_0
+$$
 
 * 离散下降:
 
