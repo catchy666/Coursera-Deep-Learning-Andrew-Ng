@@ -1,6 +1,9 @@
 <h1 align="center">Andrew Ng:《深度学习》专项课程 学习笔记</h1>
 
+![Course](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week2/tmp_imgs/00.png)
+
 ## 课程地址
+
  - 网易云课堂: [deeplearning.ai - 主页](https://study.163.com/provider/2001053000/index.htm)
  - Coursera: [深度学习 专项课程](https://www.coursera.org/specializations/deep-learning?#courses)
 
