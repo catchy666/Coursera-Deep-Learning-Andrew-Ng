@@ -15,7 +15,7 @@
 
 ## Logistic 回归
 
-Logistic 回归是一个用于二分分类的算法。
+###### Logistic 回归是一个用于二分分类的算法。
 
 Logistic 回归中使用的参数如下：
 
