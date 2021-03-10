@@ -34,24 +34,24 @@
 
 如何选择和调试超参数？传统的机器学习中，我们对每个参数等距离选取任意个数的点，然后，分别使用不同点对应的参数组合进行训练，最后根据验证集上的表现好坏，来选定最佳的参数。例如有两个待调试的参数，分别在每个参数上选取 5 个点，这样构成了 5x5=25 中参数组合，如下图所示：
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/01.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/01.jpg)
 
 但是在深度神经网络模型中，我们一般不采用这种均匀间隔取点的方法，比较好的做法是使用随机选择。对于上面这个例子，我们随机选择 25 个点，作为待调试的超参数，如下图所示：
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/02.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/02.jpg)
 
 在实际应用中完全不知道哪个参数更重要的情况下，随机采样的方式能有效解决这一问题，但是均匀采样做不到这点。
 
 为了得到更精确的最佳参数，我们应该继续对选定的区域进行由粗到细的采样（coarse to fine sampling scheme）。也就是放大表现较好的区域，再对此区域做更密集的随机采样。例如，对下图中右下角的方形区域再做 25 点的随机采样，以获得最佳参数。
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/03.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/03.jpg)
 
 ## 选择合适的范围
 
 在超参数选择的时候，一些超参数是在一个范围内进行均匀随机取值，如隐藏层神经元结点的个数、隐藏层的层数等。但是有一些超参数的选择做均匀随机取值是不合适的，这里需要按照一定的比例在不同的小范围内进行均匀随机取值。
 - 对于学习率 $α$，待调范围是$[0.0001, 1]$。如果使用均匀随机采样，那么有 90% 的采样点分布在$[0.1, 1]$之间，只有 10% 分布在$[0.0001, 0.1]$之间。这在实际应用中是不太好的，因为最佳的 $\alpha$ 值可能主要分布在$[0.0001, 0.1]$之间，而$[0.1, 1]$范围内 $\alpha$ 值效果并不好。因此我们更关注的是区间$[0.0001, 0.1]$，应该在这个区间内细分更多刻度。
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/04.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/04.jpg)
 
 一般解法是，如果线性区间为$[a, b]$，令$m=log(a)$，$n=log(b)$，则对应的$log$区间为$[m,n]$。对$log$区间的$[m,n]$进行随机均匀采样，然后得到的采样值$r$，最后反推到线性区间，即 $10^r$ 。 $10^r$ 就是最终采样的超参数。
 
@@ -71,7 +71,7 @@ r = np.power(10, r)
 
 如何搜索参数的过程大概分两种重要的思想流派，或者说人们通常采用的两种重要但不同的方法。
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/05.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/05.jpg)
 
 - 根据你所拥有的计算资源来决定你训练模型的方式：
     - Panda（熊猫方式）：在在线广告设置或者在计算机视觉应用领域有大量的数据，但受计算能力所限，同时试验大量模型比较困难。可以采用这种方式：试验一个或一小批模型，初始化，试着让其工作运转，观察它的表现，不断调整参数；
@@ -115,7 +115,7 @@ $$
 
 对于 $L$层神经网络，经过 Batch Normalization 的作用，整体流程如下：
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/06.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/06.png)
 
 值得注意的是，因为Batch Norm对各隐藏层 $Z^{[l]}=W^{[l]}A^{[l-1]}+b^{[l]}$ 有去均值的操作，所以这里的常数项 $b^{[l]}$ 可以消去，其数值效果完全可以由 $\tilde Z^{[l]}$ 中的 $\beta$ 来实现。因此，我们在使用Batch Norm的时候，可以忽略各隐藏层的常数项$ b^{[l]}$ 。在使用梯度下降算法时，分别对$ W^{[l]}$， $\beta^{[l]}$ 和 $\gamma^{[l]}$ 进行迭代更新。
 
@@ -130,7 +130,7 @@ Batch Normalization 效果很好的原因有以下两点：
 
 关于第二点，如果实际应用样本和训练样本的数据分布不同（如下图所示，提供的所有猫的训练样本都是黑猫，但是测试样本里却是什么颜色的猫都有，模型测试的结果有可能不尽人意）。
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/07.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/07.jpg)
 
 我们称发生了“Covariate Shift”。这种情况下，一般要对模型进行重新训练。Batch Normalization 的作用就是减小 Covariate Shift 所带来的影响，让模型变得更加健壮，鲁棒性（Robustness）更强。
 
@@ -193,9 +193,9 @@ $$
 
 一个直观的例子：
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/09.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/09.jpg)
 
-![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp_imgs/08.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3/tmp-imgs/08.png)
 
 ### 损失函数和成本函数
 
