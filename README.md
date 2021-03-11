@@ -52,70 +52,70 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
    <tr align='center'>
       <td>具有神经网络思维的Logistic回归</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c1-w2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 3</td>
       <td>浅层神经网络</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c1-Neural%20Networks%20and%20Deep%20Learning/week3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>带有一个隐藏层的平面数据分类</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c1-w3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 4</td>
       <td>深层神经网络</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c1-Neural%20Networks%20and%20Deep%20Learning/week4'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>一步步搭建多层神经网络以及应用（1 & 2）</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c1-w4'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='6'>课程2 - 改善深层神经网络</td>
       <td rowspan='2'>Week 1</td>
       <td>深度学习的实用层面</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week1'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>初始化、正则化、梯度校验（1 & 2 & 3）</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c2-w1'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 2</td>
       <td>优化算法</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>优化算法实战</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c2-w2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 3</td>
       <td>超参数调试，Batch正则化和程序框架</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c2-Improving%20Deep%20Neural%20Networks%20Hyperparameter%20tuning%2C%20Regularization%20and%20Optimization/week3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>TensorFlow入门</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c2-w3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='4'>课程3 - 结构化机器学习项目</td>
       <td rowspan='2'>Week 1</td>
       <td>机器学习（ML）策略（1）</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c3-Structuring%20Machine%20Learning%20Projects/week1'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>无编程作业</td>
@@ -126,7 +126,7 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
       <td rowspan='2'>Week 2</td>
       <td>机器学习（ML）策略（2）</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c3-Structuring%20Machine%20Learning%20Projects/week2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>无编程作业</td>
@@ -138,23 +138,23 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
       <td rowspan='2'>Week 1</td>
       <td>卷积神经网络</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c4-Convolutional%20Neural%20Networks/week1'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>搭建卷积神经网络模型以及应用（1&2）</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c4-w1'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 2</td>
       <td>深度卷积网络：实例探究</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c4-Convolutional%20Neural%20Networks/week2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>Keras入门与残差网络的搭建</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c4-w2'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 3</td>
