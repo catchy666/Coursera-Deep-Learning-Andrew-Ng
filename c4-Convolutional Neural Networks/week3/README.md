@@ -17,42 +17,53 @@
    * [YOLO 算法(Putting it together: YOLO algorithm)](#yolo-算法putting-it-together-yolo-algorithm)
    * [候选区域(选修)(Region proposals (Optional))](#候选区域选修region-proposals-optional)
 
+目标检测是计算机视觉领域中一个新兴的应用方向，其任务是对输入图像进行分类的同时，检测图像中是否包含某些目标，并对他们准确定位并标识。
+
+-----
+
 ## 目标定位(Object localization)
 
-定位分类问题这意味着，不仅要用算法判断图片中是不是一辆汽车，还要在图片中标记出它的位置，用边框（Bounding Box）把目标物体圈起来。一般来说，定位分类问题通常只有一个较大的对象位于图片中间位置；而在对象检测问题中，图片可以含有多个对象，甚至单张图片中会有多个不同分类的对象。
+定位分类问题不仅要求判断出图片中物体的种类，还要在图片中标记出它的具体位置，用**边界框（Bounding Box）**把物体圈起来。一般来说，定位分类问题通常只有一个较大的对象位于图片中间位置；而在对象检测问题中，图片可以含有多个对象，甚至单张图片中会有多个不同分类的对象。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/01.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/01.jpg)
 
-- 对于目标定位和目标检测问题，其模型如上所示，它会输出一个特征向量（图中右边列向量第6、7、8行），并反馈给softmax单元来预测图片类型：
-
-- 为了定位图片中汽车的位置，可以让神经网络多输出 4 个数字（图中右边列向量第2、3、4、5行），标记为 $b_x$、$b_y$、$b_h$、$b_w$。将图片左上角标记为 (0, 0)，右下角标记为 (1, 1)，则有：
+- 为了定位图片中汽车的位置，可以让神经网络多输出 4 个数字，标记为 $b_x$、$b_y$、$b_h$、$b_w$。将图片左上角标记为 (0, 0)，右下角标记为 (1, 1)，则有：
 
     * 红色方框的中心点：($b_x$，$b_y$)
     * 边界框的高度：$b_h$
     * 边界框的宽度：$b_w$
 
-- 同时还输出$P_c$（图中右边列向量第1行），表示矩形区域是目标的概率，数值在0-1之间。
+- 同时还输出$P_c$，表示矩形区域是目标的概率，数值在0-1之间。
 
-综上，目标的标签$Y$如下几种形式：
+因此，训练集不仅包含对象分类标签，还包含表示边界框的四个数字。定义目标标签$ Y$如下：
 
-$$\left[\begin{matrix}P\_c\\\ b\_x\\\ b\_y\\\ b\_h\\\ b\_w\\\ c\_1\\\ c\_2\\\ c\_3\end{matrix}\right]
-,when P\_c=1:\left[\begin{matrix}1\\\ b\_x\\\ b\_y\\\ b\_h\\\ b\_w\\\ c\_1\\\ c\_2\\\ c\_3\end{matrix}\right] ,when P_c=0:\left[\begin{matrix}0\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\end{matrix}\right]
 $$
-若$P_c$=0，表示没有检测到目标，则输出label后面的7个参数都可以忽略(用 ? 来表示)。
+\left[\begin{matrix}P_c\\\ b_x\\\ b_y\\\ b_h\\\ b_w\\\ c_1\\\ c_2\\\ c_3\end{matrix}\right]
+,
+$$
+则有：
+$$
+when \ P_c=1:\left[\begin{matrix}1\\\ b_x\\\ b_y\\\ b_h\\\ b_w\\\ c_1\\\ c_2\\\ c_3\end{matrix}\right] ,
+$$
+其中，$c_n$表示存在第$n$个种类的概率；若$P_c=0$，表示没有检测到目标，则输出label后面的7个参数都可以忽略(用$ ? $来表示)。
+$$
+when \ P_c=0:\left[\begin{matrix}0\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\\\ ?\end{matrix}\right]
+$$
+损失函数可以表示为 $L(\hat y, y)$，如果使用平方误差形式，对于不同的 $P_c$有不同的损失函数（注意下标 $i$指标签的第 $i$个值）：
 
-损失函数可以表示为 $L(\hat y, y)$，如果使用平方误差形式，对于不同的 $P\_c$有不同的损失函数（注意下标 $i$指标签的第 $i$个值）：
+1. $P_c=1$，即$y_1=1$：
 
-1. $P\_c=1$，即$y\_1=1$：
+    $L(\hat y,y)=(\hat y_1-y_1)^2+(\hat y_2-y_2)^2+\cdots+(\hat y_8-y_8)^2$
 
-    $L(\hat y,y)=(\hat y\_1-y\_1)^2+(\hat y\_2-y\_2)^2+\cdots+(\hat y\_8-y\_8)^2$
+    损失值就是不同元素的平方误差和。
 
-    损失值就是不同元素的平方和。
+2. $P_c=0$，即$y_1=0$：
 
-2. $P\_c=0$，即$y\_1=0$：
-
-    $L(\hat y,y)=(\hat y\_1-y\_1)^2$
+    $L(\hat y,y)=(\hat y_1-y_1)^2$
 
     *对于这种情况，不用考虑其它元素，只需要关注神经网络输出的准确度即可。*
+
+除了使用平方误差，也可以使用逻辑回归损失函数，类标签 $c_1,c_2,c_3$ 也可以通过 Softmax 输出。相比较而言，平方误差已经能够取得比较好的效果。
 
 ## 特征点检测(Landmark detection)
 
@@ -60,57 +71,61 @@ $$
 
 举个例子：假设需要定位一张人脸图像，同时检测其中的64个特征点，这些点可以帮助我们定位眼睛、嘴巴等人脸特征。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/02.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/02.jpg)
 
-- 具体的做法是：准备一个卷积网络和一些特征集，将人脸图片输入卷积网络，输出1或0（1表示有人脸，0表示没有人脸）然后输出$(l_{1x},l_{1y})$  ……直到$(l_{64x},l_{64y})$。这里用$l$代表一个特征，这里有129个输出单元，其中1表示图片中有人脸，因为有64个特征，64×2=128，所以最终输出128+1=129个单元，由此实现对图片的人脸检测和定位。
+- 具体的做法是：准备一个卷积网络和一些特征集，将人脸图片输入卷积网络，输出1或0（1表示有人脸，0表示没有人脸）然后输出$(l_{1x},l_{1y}),\dots,  (l_{64x},l_{64y})$。这里用$l$代表一个特征，这里有129个输出单元，其中1表示图片中有人脸，因为有64个特征，64×2=128，所以最终输出128+1=129个单元，由此实现对图片的人脸检测和定位。
+
+通过检测人脸特征点可以进行情绪分类与判断，或者应用于 AR 领域等等。也可以透过检测姿态特征点来进行人体姿态检测。
 
 ## 目标检测(Object detection)
 
 想要实现目标检测，可以采用 **基于滑动窗口的目标检测（Sliding Windows Detection）** 算法。
 
-实现目标检测的要点：
+该算法的步骤如下：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/03.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/03.jpg)
 
-1. 训练集X：将有汽车的图片进行适当的剪切，剪切成整张几乎都被汽车占据的小图或者没有汽车的小图；
-2. 训练集Y：对X中的图片进行标注，有汽车的标注1，没有汽车的标注0。
+1. 训练集上搜集相应的各种目标图片和非目标图片，样本图片要求尺寸较小，相应目标居于图片中心位置并基本占据整张图片。
 
-使用符合上述要求的这些训练集构建CNN模型，使得模型有较高的识别率。
+	- 训练集X：将有汽车的图片进行适当的剪切，剪切成整张几乎都被汽车占据的小图或者没有汽车的小图
+	- 训练集Y：对X中的图片进行标注，有汽车的标注1，没有汽车的标注0
 
-选择大小适宜的窗口与合适的固定步幅，对测试图片进行从左到右、从上倒下的滑动遍历。每个窗口区域使用已经训练好的 CNN 模型进行识别判断。
+2. 使用训练集构建 CNN 模型，使得模型有较高的识别率。
+3. 选择大小适宜的窗口与合适的固定步幅，对测试图片进行从左到右、从上倒下的滑动遍历。每个窗口区域使用已经训练好的 CNN 模型进行识别判断。
+4. 可以选择更大的窗口，然后重复第三步的操作。
 
-可以选择更大的窗口，然后重复第三步的操作。
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/04.jpg)
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/04.jpg)
+滑动窗算法的**优点**是原理简单，且不需要人为选定目标区域（检测出目标的滑动窗即为目标区域）;**缺点**是其滑动窗的大小和步进长度都需要人为直观设定。滑动窗过小或过大，步进长度过大均会降低目标检测正确率。另外，**每次滑动都要进行一次 CNN 网络计算，如果滑动窗口和步幅较小，计算成本往往很大。**
 
-滑动窗算法的优点是原理简单，且不需要人为选定目标区域（检测出目标的滑动窗即为目标区域）。但是其缺点也很明显，首先滑动窗的大小和步进长度都需要人为直观设定。滑动窗过小或过大，步进长度过大均会降低目标检测正确率。而且，每次滑动窗区域都要进行一次CNN网络计算，如果滑动窗和步进长度较小，整个目标检测的算法运行时间会很长。所以，滑动窗算法虽然简单，但是性能不佳，不够快，不够灵活。
+所以，滑动窗口目标检测算法虽然简单，但是性能不佳，效率较低。
 
 ## 卷积的滑动窗口实现(Convolutional implementation of sliding windows)
 
-滑动窗算法可以使用卷积方式实现，以提高运行速度，节约重复运算成本
+相比从较大图片多次截取，在卷积层上应用滑动窗口目标检测算法可以提高运行速度，节约重复运算成本。
 
-首先，单个滑动窗口区域进入CNN网络模型时，包含全连接层。那么滑动窗口算法卷积实现的第一步就是将全连接层转变成为卷积层，如下图所示：
+那么滑动窗口算法卷积实现的**第一步**就是将全连接层转变成为卷积层，如下图所示：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/05.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/05.jpg)
 
-全连接层转变成卷积层的操作很简单，只需要使用与上层尺寸一致的滤波算子进行卷积运算即可。最终得到的输出层维度是1 x 1 x 4，代表4类输出值。
+全连接层转变成卷积层的操作很简单，只需要使用与上一层尺寸一致的滤波器进行卷积运算。最终得到的输出层维度是$1 \times 1 \times 4$，代表4类输出值。
 
-单个窗口区域卷积网络结构建立完毕之后，对于待检测图片，即可使用该网络参数和结构进行运算。
+1. 事实上，我们不用像上一节中那样，自己去滑动窗口截取图片的一小部分然后检测，卷积这个操作就可以实现滑动窗口。
 
-事实上，我们不用像上一节中那样，自己去滑动窗口截取图片的一小部分然后检测，卷积这个操作就可以实现滑动窗口。
+2. 我们假设输入的图像是$16 \times 16 \times 3$，而窗口大小是$14 \times 14 \times 3$，我们要做的是把蓝色区域输入卷积网络，生成0或1分类；接着向右滑动2个元素，形成的新区域输入卷积网络，生成0或1分类，然后接着滑动，重复操作。<u>我们在$16 \times 16\times 3$的图像上卷积了4次，输出了4个标签，我们会发现这4次卷积里很多计算是重复的</u>。
 
-如下图中间一行卷积的初始图，我们假设输入的图像是16 x 16 x 3的，而窗口大小是14 x 14 x 3，我们要做的是把蓝色区域输入卷积网络，生成0或1分类，接着向右滑动2个元素，形成的区域输入卷积网络，生成0或1分类，然后接着滑动，重复操作。我们在16 x 16 x 3的图像上卷积了4次，输出了4个标签，我们会发现这4次卷积里很多计算是重复的。
+3. 而实际上，直接对这个$16 \times 16 \times 3$的图像进行卷积，蓝色区域就是我们初始时用来卷积的第一块区域，到最后它变成了$2\times 2\times 4$的左上角那一块。我们可以看到最后输出的$2 \times 2$，刚好就是4个输出，对应我们上面说的输出4个标签。
 
-而实际上，直接对这个16 x 16 x 3的图像进行卷积，如下图中间一行的卷积的整个过程，这个卷积就是在计算我们刚刚提到的很多重复的计算，过程中蓝色的区域就是我们初始的时候用来卷积的第一块区域，到最后它变成了2 x 2 x 4的块的左上角那一块，我们可以看到最后输出的2 x 2，刚好就是4个输出，对应我们上面说的输出4个标签。
+同样的，当图片大小是$28 \times 28 \times 3$的时候，CNN网络得到的输出层为$8 \times 8 \times 4$，共64个窗口结果。
 
-这两个过程刚好可以对应的上。所以我们不需要把原图分成四个部分，分为用卷积去检测，而是把它们作为一张图片输入给卷积网络进行计算，其中的公有区域可以共享很多计算。
-
-同样的，当图片大小是28 x 28 x 3的时候，CNN网络得到的输出层为8 x 8 x 4，共64个窗口结果。
-
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/06.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/06.jpg)
 *蓝色窗口表示卷积窗，黄色的表示图片*
 
-我们不用依靠连续的卷积操作来识别图片中的汽车，我们可以对整张图片进行卷积，一次得到所有的预测值，如果足够幸运，神经网络便可以识别出汽车的位置。
+**运行速度提高的原理：**在滑动窗口的过程中，需要重复进行 CNN 正向计算。因此，不需要将输入图片分割成多个子集，分别执行向前传播，而是将它们作为一张图片输入给卷积网络进行一次 CNN 正向计算。这样，公共区域的计算可以共享，以降低运算成本。
+
+相关论文：[**Sermanet et al., 2014. OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks**](https://arxiv.org/pdf/1312.6229.pdf)
+
+-----
 
 ## Bounding Box预测(Bounding box predictions)
 
@@ -118,111 +133,94 @@ $$
 
 假设窗口滑动到蓝色方框的地方，这不是一个能够完美匹配汽车位置的窗口，所以我们需要寻找更加精确的边界框。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/07.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/07.jpg)
 
-YOLO（You Only Look Once）算法可以解决这类问题，生成更加准确的目标区域（如上图红色窗口）。
+**YOLO（You Only Look Once）算法**可以解决这类问题，得到更精确的边框。
 
-YOLO算法首先将原始图片分割成n x n网格，每个网格代表一块区域。为简化说明，下图中将图片分成3 x 3网格。
+YOLO算法首先将原始图片分割成$n\times n$网格，每个网格代表一块区域。为简化说明，下图中将图片分成$3 \times 3$网格。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/08.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/08.jpg)
 
-然后，利用上一节卷积形式实现滑动窗口算法的思想，对该原始图片构建CNN网络，得到的的输出层维度为3 x 3 x 8。其中，3 x 3对应9个网格，每个网格的输出包含8个元素：
-$$y=\left[\begin{matrix}P\_c\\\ b\_x\\\ b\_y\\\ b\_h\\\ b\_w\\\ c\_1\\\ c\_2\\\ c\_3\end{matrix}\right]
+然后，利用上一节卷积形式实现滑动窗口算法的思想，对该原始图片构建CNN网络，得到的的输出层维度为$3 \times 3 \times 8$。其中，$3 \times 3$对应9个网格，每个网格的输出包含8个元素：
+$$
+y=\left[
+\begin{matrix}
+P_c\\\ b_x\\\ b_y\\\ b_h\\\ b_w\\\ c_1\\\ c_2\\\ c_3
+\end{matrix}
+\right]
 $$
 
-如果目标中心坐标 $(b_x,b_y)$ 不在当前网格内，则当前网格Pc=0；相反，则当前网格$P_c=1$（即只看中心坐标是否在当前网格内）。判断有目标的网格中， $b_x,b_y,b_h,b_w$ 限定了目标区域。
+如果目标中心坐标 $(b_x,b_y)$ 不在当前网格内，则当前网格$P_c=0$；相反，则当前网格$P_c=1$（即只看中心坐标是否在当前网格内）。判断有目标的网格中， $b_x,b_y,b_h,b_w$ 限定了目标区域。
 
 - 值得注意的是，当前网格左上角坐标设定为$(0, 0)$，右下角坐标设定为$(1, 1)$， $(b_x,b_y)$ 表示坐标值，范围限定在$[0,1]$之间，
-- 但是 $b_h,b_w$ 表示比例值,可以大于 1。因为目标可能超出该网格，横跨多个区域，
+- 但是 $b_h,b_w$ 表示比例值，可以大于 1。因为目标可能超出该网格，横跨多个区域.
 
-如上图所示。目标占几个网格没有关系，目标中心坐标必然在一个网格之内。
+**总结：**
 
-划分的网格可以更密一些。网格越小，则多个目标的中心坐标被划分到一个网格内的概率就越小，这恰恰是我们希望看到的。
+- 首先这和图像分类和定位算法非常像，就是它显式地输出边界框坐标，所以这能让神经网络输出边界框，可以具有任意宽高比，并且能输出更精确的坐标，不会受到滑窗分类器的步长大小限制。
 
-这是一个总结：
-
-- 首先这和图像分类和定位算法非常像，就是它显式地输出边界框坐标，所以这能让神经网络输出边界框，可以具有任意宽高比，并且能输出更精确的坐标，不会受到滑动窗口分类器的步长大小限制。
-
-- 其次，这是一个卷积实现，你并没有在3 × 3网格上跑9次算法，或者，如果用的是19 × 19的网格，19平方是361次，所以不需要让同一个算法跑361次。相反，这是单次卷积实现，但使用了一个卷积网络，有很多共享计算步骤，在处理这3 × 3(或者19 × 19)计算中很多计算步骤是共享的，所以这个算法效率很高。
+- 其次，这是一个卷积实现，你并没有在$3 \times 3$网格上跑9次算法，或者，如果用的是$19 \times 19$的网格，所以不需要让同一个算法跑361次。相反，这是单次卷积实现，**效率很高，甚至可以达到实时识别**。
 
 ## 交并比(Intersection over union)
 
-IoU，即交集与并集之比，可以用来评价目标检测区域的准确性。
+**交并比（IoU, Intersection Over Union）**函数用于评价目标检测算法，它计算预测边框和实际边框交集（I）与并集（U）之比：
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/09.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/09.jpg)
 
 如上图所示，红色方框为真实目标区域，蓝色方框为检测目标区域。两块区域的交集为绿色部分，并集为紫色部分。蓝色方框与红色方框的接近程度可以用IoU比值来定义：
 
-$IoU=\frac{I}{U}$
+$$
+IoU=\frac{I}{U}
+$$
 
-IoU可以表示任意两块区域的接近程度。IoU值介于0～1之间，且越接近1表示两块区域越接近。
+IoU 的值在 0～1 之间，且越接近 1 表示目标的定位越准确。
 
-一般在目标检测任务中，约定如果 $IoU>=0.5$ ，那么就说明检测正确。当然标准越大，则对目标检测算法越严格。得到的IoU值越大越好。
+IoU $\geq 0.5$ 时，一般可以认为预测边框是正确的，当然也可以更加严格地要求一个更高的阈值。
 
 ## 非极大值抑制(Non-max suppression)
 
 对于汽车目标检测的例子中，我们将图片分成很多精细的格子。最终预测输出的结果中，可能会有相邻的多个格子里均检测出都具有同一个对象。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/10.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/10.png)
 
-对于每个格子都运行一次，所以格子（编号1）可能会认为这辆车中点应该在格子内部，这几个格子（编号2、3）也会这么认为。对于左边的车子也一样，格子（编号4）会认为它里面有车，格子（编号5）和这个格子（编号6）也会这么认为.
+对于每个格子都运行一次，所以1号格子可能会认为这辆车中点应该在格子内部，这几个格子（编号2、3）也会这么认为。对于左边的车子也一样，4号格子会认为它里面有车，格子（编号5）和这个格子（编号6）也会这么认为。
 
 那如何判断哪个网格最为准确呢？方法是使用非极大值抑制算法。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/11.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/11.jpg)
 
-- 算法首先审视每一个概率高（$P_c>=0.6$）的格子，在上图中，分别由5个格子表示检测出车子的概率很高，分别是0.8、0.7、0.9、0.6、0.7。
-- 首先看概率最大的，这里是0.9，，然后将剩下的4个格子分别和0.9的这个格子做交并比计算，发现右边为0.6和0.7的两个格子和0.9的交并比很大，则将这两个格子抑制（舍弃）。
-- 接下来，再次审视剩下的格子（0.8，0.7），找出概率最大的那一个，这里是0.8，然后再次将该格子和剩下的格子（0.7）进行交并比计算，舍弃掉交并比很大的格子，这里剩下的0.7被舍弃。
-- 最后剩下左边的0.8和右边的0.9两个格子。
+- 将包含目标中心坐标的可信度 $P_c$小于阈值（例如 0.6）的网格丢弃；
+- 选取拥有最大 $P_c$ 的网格；
+- 分别计算该网格和其他所有网格的 IoU，将 IoU 超过预设阈值的网格丢弃；
+- 重复第 2~3 步，直到不存在未处理的网格。
 
-这就是非极大值抑制，非极大值意味着你只输出概率最大的分类结果，同时抑制那些不是极大值，却比较接近极大值的边界框。
-
-上述是单对象检测，对于多对象检测，输出标签中就会有多个分量。正确的做法是：对每个输出类别分别独立进行一次非极大值抑制。
+上述步骤适用于单类别目标检测。进行多个类别目标检测时，对于每个类别，应该单独做一次非极大值抑制。
 
 ## Anchor Boxes
 
-到目前为止，我们介绍的都是一个网格至多只能检测一个目标。那对于多个目标重叠的情况，例如一个人站在一辆车前面，该如何使用YOLO算法进行检测呢？方法是使用不同形状的Anchor Boxes。
+到目前为止，我们讨论的情况都是一个网格只检测一个对象。如果要将算法运用在多目标检测上，需要用到 Anchor Boxes。例如一个人站在一辆车前面，该如何使用YOLO算法进行检测呢？
 
-如下图所示，同一网格出现了两个目标：人和车。为了同时检测两个目标，我们可以设置两个Anchor Boxes，Anchor box 1检测人，Anchor box 2检测车。也就是说，每个网格多加了一层输出。原来的输出维度是 3 x 3 x 8，现在是3 x 3 x 2 x 8（也可以写成3 x 3 x 16的形式）。这里的2表示有两个Anchor Boxes，用来在一个网格中同时检测多个目标。每个Anchor box都有一个$P_c$值，若两个$P_c$值均大于某阈值，则检测到了两个目标。
+方法就是一个网格的标签中将包含多个 Anchor Box，相当于存在多个用以标识不同目标的边框。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/12.jpg)
 
-对于重叠的目标，这些目标的中点有可能会落在同一个网格中，对于我们之前定义的输出： $y_{i} = \left[ \begin{array}{l} P_{c}\ b_{x}\ b_{y}\ b_{h}\ b_{w}\ c_{1}\ c_{2}\ c_{3} \end{array} \right]^T$ ，只能得到一个目标的输出。
 
-而Anchor box 则是预先定义多个不同形状的Anchor box，我们需要把预测目标对应地和各个Anchor box 关联起来，所以我们重新定义目标向量(如上图右边列向量所示)：
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/12.jpg)
 
-$y_{i} = \left[ P_{c}\ b_{x}\ b_{y}\ b_{h}\ b_{w}\ c_{1}\ c_{2}\ c_{3}\ P_{c}\ b_{x}\ b_{y}\ b_{h}\ b_{w}\ c_{1}\ c_{2}\ c_{3}\cdots\right]^T$
-
-用这样的多目标向量分别对应不同的Anchor box，从而检测出多个重叠的目标。
+在上图示例中，我们希望同时检测人和汽车。因此，每个网格的的标签中含有两个 Anchor Box（如Anchor box 1检测人，Anchor box 2检测车）。输出的标签结果大小从 3×3×8 变为 3×3×16。每个Anchor box都有一个$P_c$值，若两个$P_c$都大于预设阈值，则说明检测到了两个目标。
 
 如下面的图片，里面有行人和汽车，在经过了极大值抑制操作之后，最后保留了两个边界框（Bounding Box）。对于行人形状更像Anchor box 1，汽车形状更像Anchor box 2，所以我们将人和汽车分配到不同的输出位置。具体分配，对应下图颜色。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/13.jpg)
-
-那么如何判断边界框和Anchor box匹配呢？
-
-方法很简单：将边界框和Anchor box进行交并比计算，将交并比高的边界框和Anchor box组队。如下图中，边界框（编号1）和Anchor box(编号2)匹配。
-
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/18.jpg)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/13.jpg)
 
 当然，如果格子中只有汽车的时候，我们使用了两个Anchor box，那么此时我们的目标向量就成为：
 
 $y_{i} = \left[ 0\ ?\ ?\ ?\ ?\ ?\ ?\ ?\ 1\ b_{x}\ b_{y}\ b_{h}\ b_{w}\ 0\ 1\ 0\right]^T$
 
-其中，“？”代表的是该位置是什么样的参数我们都不关心。
 
-难点问题：
 
-- 如果我们使用了两个Anchor box，但是同一个格子中却有三个对象的情况，此时只能用一些额外的手段来处理；
-- 同一个格子中存在两个对象，但它们的Anchor box 形状相同，此时也需要引入一些专门处理该情况的手段。
+- Anchor Boxes 也有局限性，对于同一网格有三个及以上目标，或者两个目标的 Anchor Box 高度重合的情况处理不好。
 
-但是以上的两种问题出现的可能性不会很大，对目标检测算法不会带来很大的影响。
-
-Anchor box 的选择：
-
-- 一般人工指定Anchor box 的形状，选择5~10个以覆盖到多种不同的形状，可以涵盖我们想要检测的对象的形状；
-- 高级方法：K-means 算法：将不同对象形状进行聚类，用聚类后的结果来选择一组最具代表性的Anchor box，以此来代表我们想要检测对象的形状。
+- Anchor Box 的形状一般通过人工选取。高级一点的方法是用 k-means 将两类对象形状聚类，选择最具代表性的 Anchor Box。
 
 ## YOLO 算法(Putting it together: YOLO algorithm)
 
@@ -239,7 +237,7 @@ Anchor box 的选择：
         - 而对于格子2的目标y则应该是这样：$y = \left[ 0\ ?\ ?\ ?\ ?\ ?\ ?\ ?\ 1\ b_{x}\ b_{y}\ b_{h}\ b_{w}\ 0\ 1\ 0\right]^T$。
         - 训练集中，对于车子有这样一个边界框（编号3），水平方向更长一点。所以如果这是你的anchor box，这是anchor box 1（编号4），这是anchor box 2（编号5），然后红框和anchor box 2的交并比更高，那么车子就和向量的下半部分相关。要注意，这里和anchor box 1有关的$P_c$是0，剩下这些分量都是don’t care-s，然后你的第二个 ，然后你要用这些($b_x,b_y,b_h,b_w$)来指定红边界框的位置
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/14.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/14.png)
 
 2. 模型预测：
     - 输入与训练集中相同大小的图片，同时得到每个格子中不同的输出结果： $3\times3\times2\times8$ 。
@@ -247,7 +245,7 @@ Anchor box 的选择：
         - 对于左上的格子（编号1）对应输出预测y（编号3）
         - 对于中下的格子（编号2）对应输出预测y（编号4）
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/15.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/15.png)
 
 3. 运行非最大值抑制（NMS）(为展示效果，换一张复杂的图)：
 
@@ -255,27 +253,26 @@ Anchor box 的选择：
     - （编号2）抛弃概率$P_c$值低的预测bounding boxes；
     - （编号3）对每个对象（如行人、汽车、摩托车）分别使用NMS算法得到最终的预测边界框。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/16.png)
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/16.png)
 
 ## 候选区域(选修)(Region proposals (Optional))
 
-R-CNN（Regions with convolutional networks），会在我们的图片中选出一些目标的候选区域，从而避免了传统滑动窗口在大量无对象区域的无用运算。
+前面介绍的滑动窗口目标检测算法对一些明显没有目标的区域也进行了扫描，这降低了算法的运行效率。为了解决这个问题，**R-CNN（Region CNN，带区域的 CNN）**被提出。通过对输入图片运行**图像分割算法**，在不同的色块上找出**候选区域（Region Proposal）**，就只需要在这些区域上运行分类器。
 
-所以在使用了R-CNN后，我们不会再针对每个滑动窗口运算检测算法，而是只选择一些候选区域的窗口，在少数的窗口上运行卷积网络。
+![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/17.png)
 
-具体实现：运用图像分割算法，将图片分割成许多不同颜色的色块，然后在这些色块上放置窗口，将窗口中的内容输入网络，从而减小需要处理的窗口数量。
+R-CNN 的缺点是运行速度很慢，所以有一系列后续研究工作改进。例如 Fast R-CNN（与基于卷积的滑动窗口实现相似，但得到候选区域的聚类步骤依然很慢）、Faster R-CNN（使用卷积对图片进行分割）。不过大多数时候还是比 YOLO 算法慢。
 
-![](https://raw.githubusercontent.com/AlbertHG/Coursera-Deep-Learning-deeplearning.ai/master/04-Convolutional%20Neural%20Networks/week3/md_images/17.png)
+相关论文：
 
-这就是R-CNN或者区域CNN的特色概念，现在R-CNN算法还是很慢的。所以有一系列的研究工作去改进这个算法，所以基本的R-CNN算法是使用某种算法求出候选区域，然后对每个候选区域运行一下分类器，每个区域会输出一个标签，并输出一个边界框，这样你就能在确实存在对象的区域得到一个精确的边界框。
+- R-CNN：[Girshik et al., 2013. Rich feature hierarchies for accurate object detection and semantic segmentation](https://arxiv.org/pdf/1311.2524.pdf)
+- Fast R-CNN：[Girshik, 2015. Fast R-CNN](https://arxiv.org/pdf/1504.08083.pdf)
+- Faster R-CNN：[Ren et al., 2016. Faster R-CNN: Towards real-time object detection with region proposal networks](https://arxiv.org/pdf/1506.01497v3.pdf)
 
+- [Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi - You Only Look Once: Unified, Real-Time Object Detection (2015)](https://arxiv.org/abs/1506.02640)
 
-参考文献：
+- [Joseph Redmon, Ali Farhadi - YOLO9000: Better, Faster, Stronger (2016)](https://arxiv.org/abs/1612.08242)
 
-[Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi - You Only Look Once: Unified, Real-Time Object Detection (2015)](https://arxiv.org/abs/1506.02640)
+- [Allan Zelener - YAD2K: Yet Another Darknet 2 Keras](https://github.com/allanzelener/YAD2K)
 
-[Joseph Redmon, Ali Farhadi - YOLO9000: Better, Faster, Stronger (2016)](https://arxiv.org/abs/1612.08242)
-
-[Allan Zelener - YAD2K: Yet Another Darknet 2 Keras](https://github.com/allanzelener/YAD2K)
-
-[The official YOLO website](https://pjreddie.com/darknet/yolo/)
+- [The official YOLO website](https://pjreddie.com/darknet/yolo/)
