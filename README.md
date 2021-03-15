@@ -19,7 +19,9 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
 ## 作业代码
 本仓库暂时只包含本人已完成的各课练习代码，部分编程作业尚未完成。
 
-推荐一份[完结的课程代码](https://github.com/JudasDie/deeplearning.ai)。
+**注：详细完整版（选择题代码+相关附件下载+文字解释）**请参照：[【目录】【中文】【deplearning.ai】【吴恩达课后作业目录】](https://blog.csdn.net/u013733326/article/details/79827273)
+
+----
 
 ## 项目目录
 
@@ -165,7 +167,7 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
    <tr align='center'>
       <td>车辆识别</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c4-w3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td rowspan='2'>Week 4</td>
