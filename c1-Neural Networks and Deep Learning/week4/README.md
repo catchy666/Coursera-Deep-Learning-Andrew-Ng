@@ -13,7 +13,7 @@
 
 ### 前向传播
 
-以上面讲过的4层神经网络为例
+以4层神经网络为例
 
 ![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c1-Neural%20Networks%20and%20Deep%20Learning/week4/tmp_imgs/02.jpg)
 
