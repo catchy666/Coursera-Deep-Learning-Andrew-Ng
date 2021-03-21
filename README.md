@@ -162,7 +162,7 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
       <td rowspan='2'>Week 3</td>
       <td>目标检测</td>
       <td>Note</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/c4-Convolutional%20Neural%20Networks/week3'>传送门</a></td>
    </tr>
    <tr align='center'>
       <td>车辆识别</td>
@@ -178,7 +178,7 @@ Markdown中部分数学公式无法正常显示，建议下载至本地食用。
    <tr align='center'>
       <td>人脸识别与神经风格转换</td>
       <td>Code</td>
-      <td><a href=''>传送门</a></td>
+      <td><a href='https://github.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/tree/main/assignments/c4-w4'>传送门</a></td>
    </tr>
 </table>
 
