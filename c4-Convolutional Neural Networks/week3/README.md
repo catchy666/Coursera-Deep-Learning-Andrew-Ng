@@ -137,7 +137,7 @@ $$
 
 **YOLO（You Only Look Once）算法**可以解决这类问题，得到更精确的边框。
 
-YOLO算法首先将原始图片分割成$n\times n$网格，每个网格代表一块区域。为简化说明，下图中将图片分成$3 \times 3$网格。
+YOLO算法首先将原始图片分割成$n\times n$网格grid，每个网格代表一块区域。为简化说明，下图中将图片分成$3 \times 3$网格。
 
 ![](https://raw.githubusercontent.com/catchy666/Coursera-Deep-Learning-Andrew-Ng/main/c4-Convolutional%20Neural%20Networks/week3/tmp-imgs/08.jpg)
 

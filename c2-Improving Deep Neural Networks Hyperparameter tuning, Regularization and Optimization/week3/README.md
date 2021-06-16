@@ -214,7 +214,7 @@ $$
 因此，损失函数可以简化为：
 
 $$
-L(\hat y, y) = -y_ilog\hat y_i = log \hat y_i
+L(\hat y, y) = -y_ilog\hat y_i = -log \hat y_i
 $$
 
 所有 m 个样本的**成本函数**为：
